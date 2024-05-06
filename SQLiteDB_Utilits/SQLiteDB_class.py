@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 
@@ -8,9 +9,24 @@ class SQLiteDB:
         self.cursor = self.conn.cursor()
 
     @classmethod
-    def create(cls, path, filename):
+    def create(cls, path='', filename='database.sqlite'):
+        if not path:
+            path = os.getcwd()  # Использование текущей директории, если путь не указан
+        instance = cls(path, filename)
+        instance.create_default_table()  # Создаем таблицу по умолчанию
+        return instance
+
+    @classmethod
+    def open(cls, filename, path=''):
+        if not path:
+            path = os.getcwd()  # Использование текущей директории, если путь не указан
         instance = cls(path, filename)
         return instance
+
+    def create_default_table(self):
+        # Создание таблицы по умолчанию, например, с именем 'DefaultTable'
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS DefaultTable (id INTEGER PRIMARY KEY, data TEXT)")
+        self.conn.commit()
 
     def create_or_update_table(self, table_name, data):
         keys = ', '.join(f"{k} {v if k != 'id' else 'INTEGER PRIMARY KEY'}" for k, v in data.items())
@@ -19,7 +35,7 @@ class SQLiteDB:
 
     def add_row(self, table_name, data):
         if 'id' not in data or not data['id']:
-            data['id'] = None  # Auto-increment if ID is None
+            data['id'] = None  # Автоинкремент, если ID не задан
         keys = ', '.join(data.keys())
         placeholders = ', '.join(['?' for _ in data])
         self.create_or_update_table(table_name, data)
