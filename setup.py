@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='SQLiteDB_utils',
-    version='0.1.0',
+    version='0.1.1',
     author='Stanislav Shavlinsky',
     author_email='stanislave777@gmail.com',
     description='Набор утилит для работы с БД SQLite',
