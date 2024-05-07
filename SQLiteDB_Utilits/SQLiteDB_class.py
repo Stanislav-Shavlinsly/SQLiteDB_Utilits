@@ -34,12 +34,10 @@ class SQLiteDB:
         self.conn.commit()
 
     def add_row(self, table_name, data):
-        if 'id' not in data or not data['id']:
-            data['id'] = None  # Автоинкремент, если ID не задан
         keys = ', '.join(data.keys())
-        placeholders = ', '.join(['?' for _ in data])
-        self.create_or_update_table(table_name, data)
-        self.cursor.execute(f"INSERT INTO {table_name} ({keys}) VALUES ({placeholders})", tuple(data.values()))
+        values = tuple(data.values())
+        placeholders = ', '.join('?' * len(data))
+        self.cursor.execute(f"INSERT INTO {table_name} ({keys}) VALUES ({placeholders})", values)
         self.conn.commit()
 
     def update_value(self, table_name, column_name, id, new_value):
